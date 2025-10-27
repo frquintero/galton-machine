@@ -38,9 +38,10 @@ htmlcov/
 *.swo
 *~
 
-# All hidden directories (except .git which is essential for git)
+# All hidden directories (except .git and .github which are essential)
 .*/*
 !.git/
+!.github/
 
 # OS
 .DS_Store
