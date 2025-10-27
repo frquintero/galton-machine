@@ -1,50 +1,45 @@
-# [PROJECT_NAME] Constitution
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+<!--
+Sync Impact Report:
+- Version change: 1.0.0 → 1.1.0
+- List of modified principles: All principles replaced (Modularity → Statistical Rigor, Error Handling → Didactic Transparency, Testing → Interactive Experiments, Documentation → Traceability of Results, Security → Portability and Zero-Friction, added Future Evolution)
+- Added sections: Mission
+- Removed sections: none
+- Templates requiring updates: .specify/templates/plan-template.md ✅ updated
+- Follow-up TODOs: none
+-->
+
+# Galton Machine Simulator Constitution
+
+## Mission
+Simulate a Galton machine in Python to teach probability, binomial distribution, and emergent normal distribution.
 
 ## Core Principles
 
-### [PRINCIPLE_1_NAME]
-<!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+### Statistical Rigor
+The simulation must be consistent with the probabilistic model (p=0.5 left/right on each collision by default). Results must be reproducible with a seed.
 
-### [PRINCIPLE_2_NAME]
-<!-- Example: II. CLI Interface -->
-[PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+### Didactic Transparency
+Code and outputs must be easy to read for a high school/undergraduate student. Each important step of the process (ball drops, column counts) must be visualizable and explainable.
 
-### [PRINCIPLE_3_NAME]
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-[PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
+### Interactive Experiments
+The user must be able to vary number of levels, number of balls, and bias (p≠0.5) without modifying the internal code. It must be possible to run multiple "experiments" and compare them.
 
-### [PRINCIPLE_4_NAME]
-<!-- Example: IV. Integration Testing -->
-[PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+### Traceability of Results
+Every reported figure (final histogram, estimated mean, estimated variance) must come directly from simulated data, not hardcoded formulas.
 
-### [PRINCIPLE_5_NAME]
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
+### Portability and Zero-Friction
+No heavy dependencies outside the standard library + matplotlib for graphs. Must run in console and optionally generate a figure.
 
-## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
+### Future Evolution
+The design must anticipate possible extensions: step-by-step animation, simple web interface, saving results.
 
-[SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
+## Technology and Platform Constraints
+The application must be written in Python, using only the standard library plus matplotlib for plotting. It should run on Linux and other platforms without heavy dependencies, focusing on portability and ease of setup.
 
-## [SECTION_3_NAME]
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
-
-[SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+## Development Workflow
+Development follows a structured workflow including version control with Git, code reviews for all changes, automated testing, and continuous integration. Releases should follow semantic versioning.
 
 ## Governance
-<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
+This constitution guides all development decisions. Amendments require consensus among maintainers, documentation of changes, and updates to dependent artifacts. Compliance must be verified in code reviews and planning phases.
 
-[GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
-
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
+**Version**: 1.1.0 | **Ratified**: 2025-10-27 | **Last Amended**: 2025-10-27

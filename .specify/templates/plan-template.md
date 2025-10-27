@@ -31,7 +31,12 @@
 
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-[Gates determined based on constitution file]
+- Ensure the simulation model maintains statistical rigor with correct probabilistic assumptions and reproducibility via seeds.
+- Design code and outputs for didactic transparency, allowing visualization and explanation of each simulation step.
+- Include interactive features for users to vary levels, balls, and bias without modifying core code, and support multiple experiment comparisons.
+- Implement traceability by ensuring all reported statistics derive directly from simulated data.
+- Select technologies (Python + matplotlib) that ensure portability, zero-friction setup, and console-based execution with optional plotting.
+- Architect the system to anticipate future extensions like animations, web interfaces, and result saving.
 
 ## Project Structure
 
