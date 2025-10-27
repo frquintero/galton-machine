@@ -46,6 +46,6 @@ def render_ascii(counts: list[int], max_width: int = 50) -> str:
         # Scale bar width proportionally to max count
         bar_width = int((count / max_count) * max_width)
         bar = "#" * bar_width
-        lines.append(f"{column:2d}: {bar}")
+        lines.append(f"{column:2d}: {bar} ({count} ball{'s' if count != 1 else ''})")
     
     return "\n".join(lines)
