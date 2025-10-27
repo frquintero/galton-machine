@@ -38,6 +38,10 @@ htmlcov/
 *.swo
 *~
 
+# All hidden directories (except .git which is essential for git)
+.*/*
+!.git/
+
 # OS
 .DS_Store
 Thumbs.db
