@@ -1,9 +1,10 @@
 """
 Matplotlib plotting for Galton board simulation results.
 """
+from typing import List
 
 
-def render_plot(counts: list[int], num_levels: int, p_right: float, num_balls: int) -> None:
+def render_plot(counts: List[int], num_levels: int, p_right: float, num_balls: int) -> None:
     """
     Generate matplotlib bar chart from simulation results.
     

@@ -1,9 +1,10 @@
 """
 Statistical computation utilities for Galton board simulation.
 """
+from typing import List
 
 
-def calculate_mean(counts: list[int]) -> float:
+def calculate_mean(counts: List[int]) -> float:
     """
     Calculate empirical mean from counts distribution.
     
@@ -21,7 +22,7 @@ def calculate_mean(counts: list[int]) -> float:
     return weighted_sum / total_balls
 
 
-def calculate_variance(counts: list[int], mean: float) -> float:
+def calculate_variance(counts: List[int], mean: float) -> float:
     """
     Calculate population variance from counts distribution.
     
@@ -44,7 +45,7 @@ def calculate_variance(counts: list[int], mean: float) -> float:
     return squared_deviations / total_balls
 
 
-def calculate_proportions(counts: list[int]) -> list[float]:
+def calculate_proportions(counts: List[int]) -> List[float]:
     """
     Calculate relative frequencies from counts.
     

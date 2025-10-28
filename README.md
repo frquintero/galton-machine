@@ -27,6 +27,10 @@ The Galton board is a classical probability demonstration device where balls dro
 git clone <repository-url>
 cd galton-sim
 
+# Create virtual environment (recommended)
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+
 # Install matplotlib (optional)
 pip install matplotlib
 ```

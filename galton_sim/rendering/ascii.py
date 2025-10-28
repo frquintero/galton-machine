@@ -1,9 +1,10 @@
 """
 ASCII histogram rendering for Galton board simulation results.
 """
+from typing import List
 
 
-def render_ascii(counts: list[int], max_width: int = 50) -> str:
+def render_ascii(counts: List[int], max_width: int = 50) -> str:
     """
     Generate ASCII text histogram from simulation results.
     

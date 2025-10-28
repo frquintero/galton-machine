@@ -2,7 +2,7 @@
 Data models for Galton board simulation.
 """
 from dataclasses import dataclass
-from typing import Optional
+from typing import Optional, List
 
 
 @dataclass
@@ -30,10 +30,10 @@ class SimulationParameters:
 class SimulationResults:
     """Output data from running a Galton board simulation."""
     
-    counts: list[int]
+    counts: List[int]
     mean: float
     variance: float
-    proportions: list[float]
+    proportions: List[float]
     
     def __post_init__(self):
         """Validate results after initialization."""

@@ -3,6 +3,7 @@ Command-line interface for Galton board simulator.
 """
 import argparse
 import sys
+from typing import List
 from .models import SimulationParameters
 from .simulation import simulate_galton
 from .rendering.ascii import render_ascii
@@ -61,7 +62,7 @@ def format_parameters(params: SimulationParameters) -> str:
     )
 
 
-def format_counts(counts: list[int]) -> str:
+def format_counts(counts: List[int]) -> str:
     """Format column counts as a compact table."""
     items = [f"{i}: {count}" for i, count in enumerate(counts)]
     # Group items for readable output (max ~10 items per line)
