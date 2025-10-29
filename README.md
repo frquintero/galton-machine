@@ -12,6 +12,7 @@ The Galton board is a classical probability demonstration device where balls dro
 - **Statistical Analysis**: Computes empirical mean, variance, and distribution proportions
 - **ASCII Visualization**: Console-based histogram for universal accessibility
 - **Graphical Output**: Optional matplotlib-based bar charts
+- **Web Interface**: Modern, lightweight web app with interactive visualizations (see [WEBAPP.md](WEBAPP.md))
 - **Reproducibility**: Seed-based random number generation for consistent results
 - **Performance**: Handles 100,000 balls with 20 levels in under 1 second
 
@@ -19,6 +20,7 @@ The Galton board is a classical probability demonstration device where balls dro
 
 - Python 3.8+
 - matplotlib (optional, for graphical visualization)
+- No additional dependencies required for the web interface (uses Python's standard library)
 
 ## Installation
 
@@ -31,17 +33,31 @@ cd galton-sim
 python -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 
-# Install matplotlib (optional)
+# Install matplotlib (optional, for CLI plotting)
 pip install matplotlib
 ```
 
 ## Quick Start
+
+### CLI Interface
 
 Run a basic simulation with default parameters (1000 balls, 10 levels, p=0.5):
 
 ```bash
 python galton_sim.py
 ```
+
+### Web Interface
+
+Launch the modern web app for interactive simulations:
+
+```bash
+python galton_webapp_run.py
+```
+
+Then open your browser to: **http://localhost:5000**
+
+See [WEBAPP.md](WEBAPP.md) for complete web app documentation.
 
 ## Usage
 
@@ -168,6 +184,11 @@ galton-sim/
 │       ├── __init__.py
 │       ├── ascii.py             # ASCII histogram rendering
 │       └── plot.py              # Matplotlib plotting (lazy import)
+├── galton_webapp/               # Lightweight web application
+│   ├── __init__.py
+│   ├── server.py                # Standard-library HTTP server and API
+│   └── templates/
+│       └── index.html           # Single-page frontend
 ├── tests/                       # Test suite
 │   ├── unit/                    # Unit tests for individual functions
 │   │   ├── test_simulation.py   # Core simulation logic tests
@@ -179,7 +200,9 @@ galton-sim/
 ├── specs/
 │   └── 001-galton-sim/          # Feature specification documents
 ├── galton_sim.py                # Root entry point script
+├── galton_webapp_run.py         # Web app launcher script
 ├── requirements-plot.txt        # Optional matplotlib dependency
+├── WEBAPP.md                    # Web app documentation
 ├── AGENTS.md                    # Developer guide for AI agents
 └── README.md                    # This file
 ```
@@ -231,7 +254,7 @@ pytest --cov=galton_sim --cov-report=term-missing
 ## Future Enhancements
 
 - Animation of ball drops
-- Web interface for interactive exploration
+- ~~Web interface for interactive exploration~~ ✅ **Completed - See [WEBAPP.md](WEBAPP.md)**
 - Result saving to CSV/JSON
 - Multiple experiment comparison
 - Visual representation of individual ball paths
