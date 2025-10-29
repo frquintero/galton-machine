@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Galton Board Simulator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            color-scheme: light dark;
+            --bg-color: #f7f9fc;
+            --card-bg: rgba(255, 255, 255, 0.9);
+            --text-color: #1f2a37;
+            --accent-color: #2563eb;
+            --accent-dark: #1d4ed8;
+            --border-color: rgba(148, 163, 184, 0.25);
+            --shadow: 0 20px 45px rgba(15, 23, 42, 0.15);
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: #0f172a;
+                --card-bg: rgba(15, 23, 42, 0.85);
+                --text-color: #e2e8f0;
+                --accent-color: #3b82f6;
+                --accent-dark: #2563eb;
+                --border-color: rgba(71, 85, 105, 0.4);
+                --shadow: 0 20px 45px rgba(15, 23, 42, 0.6);
+            }
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 2.5rem 1.5rem 3.5rem;
+            background: radial-gradient(circle at top left, rgba(37, 99, 235, 0.18), transparent 42%),
+                        radial-gradient(circle at bottom right, rgba(220, 38, 38, 0.2), transparent 45%),
+                        var(--bg-color);
+            color: var(--text-color);
+            min-height: 100vh;
+        }
+
+        .app-shell {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: grid;
+            gap: 1.75rem;
+        }
+
+        header {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            padding: 1.5rem 2rem;
+            border-radius: 20px;
+            background: var(--card-bg);
+            backdrop-filter: blur(18px);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: clamp(1.75rem, 2.7vw, 2.35rem);
+            font-weight: 700;
+            letter-spacing: -0.025em;
+        }
+
+        header p {
+            margin: 0;
+            font-size: 1.05rem;
+            max-width: 60ch;
+            color: rgba(15, 23, 42, 0.72);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            header p {
+                color: rgba(226, 232, 240, 0.72);
+            }
+        }
+
+        .layout {
+            display: grid;
+            grid-template-columns: minmax(280px, 360px) 1fr;
+            gap: 1.75rem;
+        }
+
+        @media (max-width: 960px) {
+            body {
+                padding: 1.5rem;
+            }
+
+            .layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .panel {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 1.75rem;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(12px);
+        }
+
+        .panel h2 {
+            margin-top: 0;
+            margin-bottom: 1.5rem;
+            font-size: 1.35rem;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+        }
+
+        form {
+            display: grid;
+            gap: 1.4rem;
+        }
+
+        label {
+            font-weight: 600;
+            font-size: 0.95rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+        }
+
+        input, button, output {
+            font: inherit;
+        }
+
+        input[type="number"], input[type="text"] {
+            padding: 0.75rem 0.9rem;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            background: rgba(255, 255, 255, 0.75);
+            color: inherit;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            input[type="number"], input[type="text"] {
+                background: rgba(15, 23, 42, 0.6);
+            }
+        }
+
+        input[type="range"] {
+            accent-color: var(--accent-color);
+        }
+
+        .range-output {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            font-weight: 600;
+        }
+
+        .actions {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 0.8rem 1.3rem;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            letter-spacing: 0.01em;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+
+        button.primary {
+            background: linear-gradient(135deg, var(--accent-color), var(--accent-dark));
+            color: white;
+            box-shadow: 0 12px 25px rgba(37, 99, 235, 0.25);
+        }
+
+        button.secondary {
+            background: rgba(148, 163, 184, 0.15);
+            color: inherit;
+            border: 1px solid var(--border-color);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        button:not(:disabled):hover {
+            transform: translateY(-1px);
+        }
+
+        .results-grid {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 1rem;
+        }
+
+        .stat-card {
+            padding: 1.1rem 1rem;
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            background: rgba(255, 255, 255, 0.65);
+            display: grid;
+            gap: 0.4rem;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .stat-card {
+                background: rgba(15, 23, 42, 0.55);
+            }
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            opacity: 0.7;
+        }
+
+        .stat-value {
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+
+        .chart-wrapper {
+            background: rgba(255, 255, 255, 0.65);
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+            padding: 1.25rem;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .chart-wrapper {
+                background: rgba(15, 23, 42, 0.55);
+            }
+        }
+
+        pre {
+            margin: 0;
+            padding: 1rem;
+            border-radius: 16px;
+            background: rgba(15, 23, 42, 0.85);
+            color: #f8fafc;
+            font-family: "SFMono-Regular", "Menlo", "Consolas", monospace;
+            overflow-x: auto;
+            border: 1px solid rgba(100, 116, 139, 0.25);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 0.6rem 0.65rem;
+            text-align: right;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.95rem;
+        }
+
+        th:first-child, td:first-child {
+            text-align: left;
+        }
+
+        .status-banner {
+            display: none;
+            padding: 1rem 1.2rem;
+            border-radius: 14px;
+            font-weight: 600;
+        }
+
+        .status-banner.error {
+            display: flex;
+            gap: 0.8rem;
+            align-items: center;
+            background: rgba(220, 38, 38, 0.15);
+            color: #b91c1c;
+            border: 1px solid rgba(220, 38, 38, 0.3);
+        }
+
+        .status-banner.success {
+            display: flex;
+            gap: 0.8rem;
+            align-items: center;
+            background: rgba(22, 163, 74, 0.15);
+            color: #15803d;
+            border: 1px solid rgba(22, 163, 74, 0.3);
+        }
+
+        footer {
+            text-align: center;
+            font-size: 0.9rem;
+            opacity: 0.7;
+        }
+
+        .loading-indicator {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .spinner {
+            width: 1rem;
+            height: 1rem;
+            border: 2px solid rgba(255,255,255,0.4);
+            border-top-color: rgba(255,255,255,0.9);
+            border-radius: 50%;
+            animation: spin 0.75s linear infinite;
+        }
+
+        @media (prefers-color-scheme: light) {
+            .spinner {
+                border: 2px solid rgba(37,99,235,0.2);
+                border-top-color: rgba(37,99,235,0.8);
+            }
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-shell">
+        <header>
+            <h1>Galton Board Simulator</h1>
+            <p>Experiment with probabilities and observe the resulting distribution of balls across the board. Adjust parameters, run simulations instantly, and compare outcomes visually.</p>
+        </header>
+
+        <div class="layout">
+            <section class="panel">
+                <h2>Simulation Controls</h2>
+                <form id="simulation-form">
+                    <label>
+                        Number of balls
+                        <input type="number" id="num-balls" name="num_balls" value="1000" min="1" step="1" required>
+                    </label>
+                    <label>
+                        Number of levels
+                        <input type="number" id="num-levels" name="num_levels" value="10" min="0" max="30" step="1" required>
+                    </label>
+                    <label>
+                        Probability of moving right
+                        <input type="range" id="p-right" name="p_right" value="0.5" min="0" max="1" step="0.01">
+                        <div class="range-output">
+                            <span>Left bias</span>
+                            <output id="p-right-value">0.50</output>
+                            <span>Right bias</span>
+                        </div>
+                    </label>
+                    <label>
+                        Random seed (optional)
+                        <input type="text" id="seed" name="seed" placeholder="Deterministic seed e.g. 42">
+                    </label>
+                    <div class="actions">
+                        <button type="submit" class="primary" id="simulate-button">
+                            Simulate
+                        </button>
+                        <button type="button" class="secondary" id="reset-button">
+                            Reset
+                        </button>
+                    </div>
+                </form>
+            </section>
+
+            <section class="panel">
+                <h2>Results</h2>
+                <div id="status-message" class="status-banner"></div>
+                <div class="results-grid" id="results" hidden>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-label">Mean column</div>
+                            <div class="stat-value" id="mean-value">--</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Variance</div>
+                            <div class="stat-value" id="variance-value">--</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Balls simulated</div>
+                            <div class="stat-value" id="balls-value">--</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Levels</div>
+                            <div class="stat-value" id="levels-value">--</div>
+                        </div>
+                    </div>
+
+                    <div class="chart-wrapper">
+                        <canvas id="distribution-chart" height="220"></canvas>
+                    </div>
+
+                    <div>
+                        <h3>ASCII Histogram</h3>
+                        <pre id="ascii-output">Run a simulation to see the distribution.</pre>
+                    </div>
+
+                    <div>
+                        <h3>Column counts</h3>
+                        <table id="counts-table">
+                            <thead>
+                                <tr>
+                                    <th>Column</th>
+                                    <th>Count</th>
+                                    <th>Proportion</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <footer>
+            Built on top of the original Galton board CLI simulator.
+        </footer>
+    </div>
+
+    <script>
+        const form = document.getElementById('simulation-form');
+        const simulateButton = document.getElementById('simulate-button');
+        const resetButton = document.getElementById('reset-button');
+        const statusMessage = document.getElementById('status-message');
+        const resultsContainer = document.getElementById('results');
+        const meanValue = document.getElementById('mean-value');
+        const varianceValue = document.getElementById('variance-value');
+        const ballsValue = document.getElementById('balls-value');
+        const levelsValue = document.getElementById('levels-value');
+        const asciiOutput = document.getElementById('ascii-output');
+        const countsTableBody = document.querySelector('#counts-table tbody');
+        const pRightSlider = document.getElementById('p-right');
+        const pRightValue = document.getElementById('p-right-value');
+        
+        let chartInstance = null;
+
+        const toggleLoading = (isLoading) => {
+            if (isLoading) {
+                simulateButton.disabled = true;
+                simulateButton.innerHTML = '<span class="loading-indicator"><span class="spinner"></span>Simulating...</span>';
+            } else {
+                simulateButton.disabled = false;
+                simulateButton.textContent = 'Simulate';
+            }
+        };
+
+        const showStatus = (message, type) => {
+            statusMessage.textContent = message;
+            statusMessage.className = `status-banner ${type}`;
+        };
+
+        const clearStatus = () => {
+            statusMessage.textContent = '';
+            statusMessage.className = 'status-banner';
+        };
+
+        const updateChart = (counts) => {
+            const labels = counts.map((_, index) => index);
+            const data = counts;
+
+            const chartConfig = {
+                type: 'bar',
+                data: {
+                    labels,
+                    datasets: [
+                        {
+                            label: 'Balls per column',
+                            data,
+                            borderRadius: 6,
+                            backgroundColor: data.map((count, index) => `rgba(37, 99, 235, ${0.35 + (0.5 * count / Math.max(...data))})`),
+                            borderColor: 'rgba(37, 99, 235, 0.85)',
+                            borderWidth: 1.2,
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            grid: { display: false },
+                            ticks: { color: getComputedStyle(document.documentElement).getPropertyValue('--text-color') }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            ticks: { color: getComputedStyle(document.documentElement).getPropertyValue('--text-color') },
+                            grid: { color: 'rgba(148, 163, 184, 0.25)' }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: (context) => `Column ${context.label}: ${context.parsed.y} balls`
+                            }
+                        }
+                    }
+                }
+            };
+
+            const ctx = document.getElementById('distribution-chart').getContext('2d');
+
+            if (chartInstance) {
+                chartInstance.destroy();
+            }
+
+            chartInstance = new Chart(ctx, chartConfig);
+        };
+
+        const updateTable = (counts, proportions) => {
+            countsTableBody.innerHTML = '';
+            counts.forEach((count, index) => {
+                const proportion = proportions[index] * 100;
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${index}</td>
+                    <td>${count.toLocaleString()}</td>
+                    <td>${proportion.toFixed(2)}%</td>
+                `;
+                countsTableBody.appendChild(row);
+            });
+        };
+
+        const handleSimulationResponse = (payload) => {
+            const { counts, mean, variance, ascii, proportions, parameters } = payload;
+
+            meanValue.textContent = mean.toFixed(2);
+            varianceValue.textContent = variance.toFixed(2);
+            ballsValue.textContent = parameters.num_balls.toLocaleString();
+            levelsValue.textContent = parameters.num_levels;
+            asciiOutput.textContent = ascii;
+
+            updateChart(counts);
+            updateTable(counts, proportions);
+
+            resultsContainer.hidden = false;
+        };
+
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            clearStatus();
+            toggleLoading(true);
+
+            const formData = new FormData(form);
+            const payload = Object.fromEntries(formData.entries());
+
+            // Convert values to numbers where appropriate
+            payload.num_balls = Number(payload.num_balls);
+            payload.num_levels = Number(payload.num_levels);
+            payload.p_right = Number(payload.p_right);
+            if (payload.seed === '') {
+                payload.seed = null;
+            }
+
+            try {
+                const response = await fetch('/api/simulate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const result = await response.json();
+
+                if (!response.ok || !result.success) {
+                    throw new Error(result.error || 'Simulation failed.');
+                }
+
+                handleSimulationResponse(result.data);
+                showStatus('Simulation completed successfully.', 'success');
+            } catch (error) {
+                showStatus(error.message, 'error');
+            } finally {
+                toggleLoading(false);
+            }
+        });
+
+        pRightSlider.addEventListener('input', () => {
+            const value = Number(pRightSlider.value);
+            pRightValue.textContent = value.toFixed(2);
+        });
+
+        resetButton.addEventListener('click', () => {
+            form.reset();
+            pRightSlider.dispatchEvent(new Event('input'));
+            resultsContainer.hidden = true;
+            clearStatus();
+            asciiOutput.textContent = 'Run a simulation to see the distribution.';
+            if (chartInstance) {
+                chartInstance.destroy();
+                chartInstance = null;
+            }
+            countsTableBody.innerHTML = '';
+            meanValue.textContent = '--';
+            varianceValue.textContent = '--';
+            ballsValue.textContent = '--';
+            levelsValue.textContent = '--';
+        });
+
+        // Initialize slider output on page load
+        pRightSlider.dispatchEvent(new Event('input'));
+    </script>
+</body>
+</html>
